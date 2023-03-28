@@ -112,7 +112,7 @@ export function getVerifyCode({ mobile, code }) {
     secret: generateSecret(),
   }
   return requestService({
-    url: "/verify-code",
+    url: "/api/v1/verify-code",
     method: "post",
     data,
     transformRequest: [

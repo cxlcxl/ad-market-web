@@ -1,4 +1,6 @@
 import axios from "axios"
+import Toastify from "toastify-js"
+import "toastify-js/src/toastify.css"
 
 const networkConfig = {
   serverUrl: process.env.VUE_APP_BASE_API,
@@ -16,6 +18,9 @@ export function requestService(config) {
   // request拦截器
   service.interceptors.request.use(
     (config) => {
+      Toastify({
+        text: "This is a toast with offset",
+      }).showToast()
       return config
     },
     (error) => {
