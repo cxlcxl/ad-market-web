@@ -14,7 +14,7 @@ export default defineConfig(({ command, mode }) => {
         "/api/": {
           target: process.env.VUE_APP_BASE_API,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/backend/, ""),
+          rewrite: (path) => path.replace(/^\/api/, "/api"),
         },
       },
     },

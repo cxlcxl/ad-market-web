@@ -104,26 +104,27 @@ function generateSecret() {
   return k.join("")
 }
 
-// 登录方法
-export function getVerifyCode({ mobile, code }) {
+export function getVerifyCode({ mobile }) {
   const data = {
     mobile,
-    code,
     secret: generateSecret(),
   }
   return requestService({
-    url: "/api/v1/verify-code",
+    url: "/v1/sms",
     method: "post",
     data,
-    transformRequest: [
-      function (data) {
-        let ret = ""
-        for (let it in data) {
-          ret +=
-            encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&"
-        }
-        return ret
-      },
-    ],
+  })
+}
+
+export function codeVerify({ mobile, code }) {
+  const data = {
+    mobile: mobile.toString(),
+    code: code.toString(),
+    secret: generateSecret(),
+  }
+  return requestService({
+    url: "/v1/sms-valid",
+    method: "post",
+    data
   })
 }

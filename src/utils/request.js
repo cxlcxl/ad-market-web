@@ -31,7 +31,7 @@ export function requestService(config) {
   // 响应拦截器
   service.interceptors.response.use(
     (res) => {
-      return response.data
+      return res.data
     },
     (error) => {
       const err = error.response.data

@@ -1,7 +1,9 @@
 <template>
   <div class="page-container">
+    <header-page />
 
-    <div class="text-box" id="sign-in-box">
+    <div class="leave-msg">
+      <div class="text-box" id="sign-in-box">
       <div class="label">手机号</div>
       <div class="mobile-input">
         <input type="number" placeholder="用于课程及学习资料" class="mobile" v-model="signForm.mobile" @input="handleChangeMobile" maxlength="11" />
@@ -9,7 +11,9 @@
     </div>
     <div class="text-box" v-if="pageData.showVerify">
       <div class="label">验证码</div>
-      <div class="mobile-input"><input type="number" placeholder="请填写验证码" class="verify-code" v-model="signForm.code" /></div>
+      <div class="mobile-input">
+        <input type="number" placeholder="请填写验证码" class="verify-code" v-model="signForm.code" maxlength="4" />
+      </div>
       <div :class="{'verify-code-btn': true, 'bright': !pageData.begin}" @click="handleGetVerifyCode">
         <span v-if="pageData.begin">{{pageData.codeTimeout}} s</span>
         <span v-else>{{pageData.verifyText}}</span>
@@ -17,18 +21,24 @@
     </div>
     <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
     <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名</div>
+    </div>
 
     <a href="#sign-in-box">
       <div class="page-sign-up-btn" :loading="pageData.loading">立即报名</div>
     </a>
+
+    <footer-page />
   </div>
 </template>
 
 <script>
 import { defineComponent, onMounted, reactive, ref } from "vue"
-import { getVerifyCode } from "./utils/utils"
+import { getVerifyCode, codeVerify } from "./utils/utils"
+import HeaderPage from "./components/header.vue"
+import FooterPage from "./components/footer.vue"
 
 export default defineComponent({
+  components: {HeaderPage, FooterPage},
   setup() {
     let pageData = reactive({
       verifyText: "获取验证码",
@@ -71,14 +81,16 @@ export default defineComponent({
         return
       }
 
-      getVerifyCode(signForm)
+      codeVerify(signForm)
         .then((res) => {
-          console.log(res)
+          if (res.code === 0) {
+
+          }
         })
         .catch((err) => {
           console.log(err)
         })
-      pageData.loading = true
+      // pageData.loading = true
     }
     const handleGetVerifyCode = () => {
       if (!/^1\d{10}$/.test(signForm.mobile)) {
@@ -89,9 +101,18 @@ export default defineComponent({
       if (pageData.begin) {
         return
       } else {
-        pageData.showVerify = true
-        pageData.begin = true
-        timeRun()
+
+      getVerifyCode({mobile: signForm.mobile.toString()})
+        .then((res) => {
+          if (res.code === 0) {
+            pageData.showVerify = true
+            pageData.begin = true
+            timeRun()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       }
     }
     const timeRun = () => {
@@ -124,10 +145,17 @@ export default defineComponent({
 <style scoped lang="less">
 .page-container {
   width: 100%;
+  height: 100%;
   max-width: 760px;
-  padding: 1.3rem 0;
+  // padding: 1.3rem 0;
   background: #fff;
   margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+
+  .leave-msg {
+    margin: 1.5rem 0;
+  }
 
   .text-box {
     width: 90%;
@@ -174,7 +202,7 @@ export default defineComponent({
       color: #a7abb3;
     }
     .bright {
-      color: #fa5151;
+      color: #67C23A;
     }
   }
 
@@ -184,10 +212,11 @@ export default defineComponent({
     margin: -0.5rem auto 0.2rem;
     color: #fa5151;
     text-align: center;
+    font-weight: 600;
   }
   .sign-up-btn {
     width: 90%;
-    background: #fa5151;
+    background: #67C23A;
     color: #fff;
     font-size: 0.9rem;
     text-align: center;
@@ -203,8 +232,8 @@ export default defineComponent({
   bottom: 0.7rem;
   left: 5%;
   width: 90%;
-  max-width: 760px * 0.8;
-  background: #fa5151;
+  max-width: 760px;
+  background: #67C23A;
   color: #fff;
   font-size: 0.9rem;
   text-align: center;
