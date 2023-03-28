@@ -1,6 +1,7 @@
 <template>
   <div class="page-container">
-    <div class="text-box">
+
+    <div class="text-box" id="sign-in-box">
       <div class="label">手机号</div>
       <div class="mobile-input">
         <input type="number" placeholder="用于课程及学习资料" class="mobile" v-model="pageData.mobile" @input="handleChangeMobile" maxlength="11" />
@@ -17,6 +18,10 @@
     <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
     <div class="sign-up-btn" @click="handleSignIn">立即报名</div>
   </div>
+
+  <a href="#sign-in-box">
+    <div class="page-sign-up-btn">立即报名</div>
+  </a>
 </template>
 
 <script>
@@ -65,6 +70,7 @@ export default defineComponent({
       }
 
       let secret = generateSecret()
+      console.log(secret)
       pageData.loading = true
     }
     const handleGetVerifyCode = () => {
@@ -179,6 +185,24 @@ export default defineComponent({
     height: 2.2rem;
     line-height: 2.2rem;
     border-radius: 1rem;
+  }
+}
+
+.page-sign-up-btn {
+  position: fixed;
+  bottom: 0.7rem;
+  left: 5%;
+  width: 90%;
+  background: #fa5151;
+  color: #fff;
+  font-size: 0.9rem;
+  text-align: center;
+  height: 2.2rem;
+  line-height: 2.2rem;
+  border-radius: 1rem;
+
+  a {
+    color: inherit;
   }
 }
 </style>
