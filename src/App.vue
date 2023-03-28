@@ -4,29 +4,29 @@
     <div class="text-box" id="sign-in-box">
       <div class="label">手机号</div>
       <div class="mobile-input">
-        <input type="number" placeholder="用于课程及学习资料" class="mobile" v-model="pageData.mobile" @input="handleChangeMobile" maxlength="11" />
+        <input type="number" placeholder="用于课程及学习资料" class="mobile" v-model="signForm.mobile" @input="handleChangeMobile" maxlength="11" />
       </div>
     </div>
     <div class="text-box" v-if="pageData.showVerify">
       <div class="label">验证码</div>
-      <div class="mobile-input"><input type="number" placeholder="请填写验证码" class="verify-code" /></div>
+      <div class="mobile-input"><input type="number" placeholder="请填写验证码" class="verify-code" v-model="signForm.code" /></div>
       <div :class="{'verify-code-btn': true, 'bright': !pageData.begin}" @click="handleGetVerifyCode">
         <span v-if="pageData.begin">{{pageData.codeTimeout}} s</span>
         <span v-else>{{pageData.verifyText}}</span>
       </div>
     </div>
     <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
-    <div class="sign-up-btn" @click="handleSignIn">立即报名</div>
-  </div>
+    <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名</div>
 
-  <a href="#sign-in-box">
-    <div class="page-sign-up-btn">立即报名</div>
-  </a>
+    <a href="#sign-in-box">
+      <div class="page-sign-up-btn" :loading="pageData.loading">立即报名</div>
+    </a>
+  </div>
 </template>
 
 <script>
 import { defineComponent, onMounted, reactive, ref } from "vue"
-import { generateSecret } from "./utils"
+import { getVerifyCode } from "./utils/utils"
 
 export default defineComponent({
   setup() {
@@ -37,8 +37,10 @@ export default defineComponent({
       begin: false,
       hasError: false,
       codeTimeout: 60,
-      mobile: "",
       errorMsg: "有错误",
+    })
+    let signForm = reactive({
+      mobile: "",
       code: "",
     })
 
@@ -47,34 +49,39 @@ export default defineComponent({
       fetchData()
     })
     const fetchData = () => {
-      pageData.loading = true
+      // pageData.loading = true
     }
     const handleChangeMobile = () => {
-      let mobile = pageData.mobile.toString()
+      let mobile = signForm.mobile.toString()
       if (mobile.length > 11) {
-        pageData.mobile = mobile.substring(0, 11)
+        signForm.mobile = mobile.substring(0, 11)
       }
-      console.log(pageData.mobile)
-      if (/^1\d{10}$/.test(pageData.mobile)) {
+      console.log(signForm.mobile)
+      if (/^1\d{10}$/.test(signForm.mobile)) {
         pageData.showVerify = true
       }
     }
     const handleSignIn = () => {
-      if (!/^1\d{10}$/.test(pageData.mobile)) {
+      if (!/^1\d{10}$/.test(signForm.mobile)) {
         setError(true, "请填写正确格式的手机号码")
         return
       }
-      if (!/^\d{4}$/.test(pageData.code)) {
+      if (!/^\d{4}$/.test(signForm.code)) {
         setError(true, "请填写验证码")
         return
       }
 
-      let secret = generateSecret()
-      console.log(secret)
+      getVerifyCode(signForm)
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       pageData.loading = true
     }
     const handleGetVerifyCode = () => {
-      if (!/^1\d{10}$/.test(pageData.mobile)) {
+      if (!/^1\d{10}$/.test(signForm.mobile)) {
         setError(true, "请填写正确格式的手机号码")
         return
       }
@@ -104,6 +111,7 @@ export default defineComponent({
 
     return {
       pageData,
+      signForm,
       fetchData,
       handleSignIn,
       handleGetVerifyCode,
@@ -116,8 +124,10 @@ export default defineComponent({
 <style scoped lang="less">
 .page-container {
   width: 100%;
+  max-width: 760px;
   padding: 1.3rem 0;
   background: #fff;
+  margin: 0 auto;
 
   .text-box {
     width: 90%;
@@ -193,6 +203,7 @@ export default defineComponent({
   bottom: 0.7rem;
   left: 5%;
   width: 90%;
+  max-width: 760px * 0.8;
   background: #fa5151;
   color: #fff;
   font-size: 0.9rem;

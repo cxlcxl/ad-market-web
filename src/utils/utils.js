@@ -1,3 +1,5 @@
+import { requestService } from "./request"
+
 const keys = [
   "RyQpeL5rYuMF50Dp",
   "6v5un6u4WXfSMKEn",
@@ -89,7 +91,7 @@ function fullClose(n, m) {
   return Math.ceil(result)
 }
 
-export function generateSecret() {
+function generateSecret() {
   var k = []
   var kl = keys.length
   const n = fullClose(0, fullClose(88, 88888))
@@ -100,4 +102,28 @@ export function generateSecret() {
     k.push(keys[l].concat(l))
   }
   return k.join("")
+}
+
+// 登录方法
+export function getVerifyCode({ mobile, code }) {
+  const data = {
+    mobile,
+    code,
+    secret: generateSecret(),
+  }
+  return requestService({
+    url: "/verify-code",
+    method: "post",
+    data,
+    transformRequest: [
+      function (data) {
+        let ret = ""
+        for (let it in data) {
+          ret +=
+            encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&"
+        }
+        return ret
+      },
+    ],
+  })
 }
