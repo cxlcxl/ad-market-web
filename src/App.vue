@@ -4,23 +4,23 @@
 
     <div class="leave-msg">
       <div class="text-box" id="sign-in-box">
-      <div class="label">手机号</div>
-      <div class="mobile-input">
-        <input type="number" placeholder="用于课程及学习资料" class="mobile" v-model="signForm.mobile" @input="handleChangeMobile" maxlength="11" />
+        <div class="label">手机号</div>
+        <div class="mobile-input">
+          <input type="number" placeholder="用于课程及学习资料" class="mobile" v-model="signForm.mobile" @input="handleChangeMobile" maxlength="11" />
+        </div>
       </div>
-    </div>
-    <div class="text-box" v-if="pageData.showVerify">
-      <div class="label">验证码</div>
-      <div class="mobile-input">
-        <input type="number" placeholder="请填写验证码" class="verify-code" v-model="signForm.code" maxlength="4" />
+      <div class="text-box" v-if="pageData.showVerify">
+        <div class="label">验证码</div>
+        <div class="mobile-input">
+          <input type="number" placeholder="请填写验证码" class="verify-code" v-model="signForm.code" maxlength="4" />
+        </div>
+        <div :class="{'verify-code-btn': true, 'bright': !pageData.begin}" @click="handleGetVerifyCode">
+          <span v-if="pageData.begin">{{pageData.codeTimeout}} s</span>
+          <span v-else>{{pageData.verifyText}}</span>
+        </div>
       </div>
-      <div :class="{'verify-code-btn': true, 'bright': !pageData.begin}" @click="handleGetVerifyCode">
-        <span v-if="pageData.begin">{{pageData.codeTimeout}} s</span>
-        <span v-else>{{pageData.verifyText}}</span>
-      </div>
-    </div>
-    <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
-    <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名</div>
+      <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
+      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名</div>
     </div>
 
     <a href="#sign-in-box">
@@ -33,12 +33,12 @@
 
 <script>
 import { defineComponent, onMounted, reactive, ref } from "vue"
-import { getVerifyCode, codeVerify } from "./utils/utils"
+import { getVerifyCode, codeVerify, toastMsg } from "./utils/utils"
 import HeaderPage from "./components/header.vue"
 import FooterPage from "./components/footer.vue"
 
 export default defineComponent({
-  components: {HeaderPage, FooterPage},
+  components: { HeaderPage, FooterPage },
   setup() {
     let pageData = reactive({
       verifyText: "获取验证码",
@@ -66,7 +66,6 @@ export default defineComponent({
       if (mobile.length > 11) {
         signForm.mobile = mobile.substring(0, 11)
       }
-      console.log(signForm.mobile)
       if (/^1\d{10}$/.test(signForm.mobile)) {
         pageData.showVerify = true
       }
@@ -84,7 +83,6 @@ export default defineComponent({
       codeVerify(signForm)
         .then((res) => {
           if (res.code === 0) {
-
           }
         })
         .catch((err) => {
@@ -101,27 +99,33 @@ export default defineComponent({
       if (pageData.begin) {
         return
       } else {
-
-      getVerifyCode({mobile: signForm.mobile.toString()})
-        .then((res) => {
-          if (res.code === 0) {
-            pageData.showVerify = true
-            pageData.begin = true
-            timeRun()
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+        pageData.showVerify = true
+        pageData.begin = true
+        timeRun()
+        getVerifyCode({ mobile: signForm.mobile.toString() })
+          .then((res) => {
+            if (res.code === 0) {
+              toastMsg("验证码发送成功，请注意查收短信")
+            } else {
+              toastMsg(res.message)
+            }
+          })
+          .catch((err) => {
+            toastMsg(err.message ? err.message : "接口调用异常，请重试")
+            stopTimeout()
+          })
       }
+    }
+    const stopTimeout = () => {
+      pageData.begin = false
+      pageData.codeTimeout = 60
+      clearInterval(timeoutVerify)
     }
     const timeRun = () => {
       timeoutVerify = setInterval(() => {
         pageData.codeTimeout -= 1
         if (pageData.codeTimeout <= 0) {
-          pageData.begin = false
-          pageData.codeTimeout = 60
-          clearInterval(timeoutVerify)
+          stopTimeout()
         }
       }, 1000)
     }
@@ -202,7 +206,7 @@ export default defineComponent({
       color: #a7abb3;
     }
     .bright {
-      color: #67C23A;
+      color: #67c23a;
     }
   }
 
@@ -216,7 +220,7 @@ export default defineComponent({
   }
   .sign-up-btn {
     width: 90%;
-    background: #67C23A;
+    background: #67c23a;
     color: #fff;
     font-size: 0.9rem;
     text-align: center;
@@ -233,7 +237,7 @@ export default defineComponent({
   left: 5%;
   width: 90%;
   max-width: 760px;
-  background: #67C23A;
+  background: #67c23a;
   color: #fff;
   font-size: 0.9rem;
   text-align: center;

@@ -1,4 +1,6 @@
 import { requestService } from "./request"
+import Toastify from "toastify-js"
+import "toastify-js/src/toastify.css"
 
 const keys = [
   "RyQpeL5rYuMF50Dp",
@@ -104,6 +106,19 @@ function generateSecret() {
   return k.join("")
 }
 
+export function toastMsg(msg) {
+  Toastify({
+    text: msg,
+    position: "center",
+    style: {
+      background: "rgba(0, 0, 0, 0.7)",
+      padding: "5px 20px",
+      fontSize: "0.9rem",
+    },
+    duration: 5000,
+  }).showToast()
+}
+
 export function getVerifyCode({ mobile }) {
   const data = {
     mobile,
@@ -125,6 +140,6 @@ export function codeVerify({ mobile, code }) {
   return requestService({
     url: "/v1/sms-valid",
     method: "post",
-    data
+    data,
   })
 }

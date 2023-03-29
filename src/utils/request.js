@@ -1,6 +1,5 @@
 import axios from "axios"
-import Toastify from "toastify-js"
-import "toastify-js/src/toastify.css"
+import { toastMsg } from "./utils"
 
 const networkConfig = {
   serverUrl: process.env.VUE_APP_BASE_API,
@@ -18,9 +17,6 @@ export function requestService(config) {
   // request拦截器
   service.interceptors.request.use(
     (config) => {
-      Toastify({
-        text: "This is a toast with offset",
-      }).showToast()
       return config
     },
     (error) => {
@@ -35,12 +31,8 @@ export function requestService(config) {
     },
     (error) => {
       const err = error.response.data
-
       const errMsg = err.message ? err.message : "接口调用异常，请重试"
-      // ElMessage.error({
-      //   message: errMsg,
-      //   duration: 5 * 1000,
-      // })
+      toastMsg(errMsg)
       return Promise.reject(err)
     }
   )
