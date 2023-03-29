@@ -1,145 +1,46 @@
 import axios from "axios"
-// import { toastMsg } from "./utils"
+import { encrypt } from "./encrypt"
+import { toastMsg } from "./utils"
 
-const keys = [
-  "RyQpeL5rYuMF50Dp",
-  "6v5un6u4WXfSMKEn",
-  "AMtIH237CfqtWWeC",
-  "rsP2FL7c1UMCYsM4",
-  "Xs2IjWlPNZi4Gmhf",
-  "qPjVFzusbigogjmf",
-  "LLNUrYxflmf3Gok5",
-  "XzW1DiDK42007f7I",
-  "fFLv1XNu17akCRm6",
-  "WPKNVodXn3YQDMFI",
-  "IG28Qm24Ka5rrIdy",
-  "f7zgQQk3b7SfT1oo",
-  "BLhsuofzKDlJW0ha",
-  "QgfPW9Q5zosEyxsr",
-  "Mzj0xv0XircDqCUB",
-  "liOYJLxOz5qjdcmD",
-  "FWrHIE0EpGEcemNh",
-  "rIbCJtmpeJM2kxTX",
-  "HoRlM1gKbcJCP5qV",
-  "dZo8ECFwovwrdYRs",
-  "sF1ynG3RzyRS9f9W",
-  "6zSCeLWdH92vvnXo",
-  "jDKRFJM3wpQbMiPF",
-  "itYgBR0qomxpYl8x",
-  "JhGTsZe7vo6jEEzY",
-  "FKu5IJt8STBe3ScN",
-  "zNaKC35Xf4LENLvY",
-  "h0b3DTd4pvq5toMC",
-  "dHKrnmUs2B0acg5A",
-  "r1VQP3aMCg4XZGzB",
-  "euJg0CvMX2qrCZQk",
-  "6fOhn5zVRuIFpyVq",
-  "qXNdccMCyKhnMViX",
-  "jUcm6KdG1jTXovtI",
-  "HhK99B6LZ8kTFy7t",
-  "r4byJacQHlPdEKza",
-  "igxZ4ea1Y7s58oWy",
-  "l3gcLQ9DGpYlqesB",
-  "BV5kMAwPoTJwiguq",
-  "7BSEFmn2nwrGLrIc",
-  "QSHCRFWQ7NRnjzbP",
-  "UADC7bgut05Tqj1l",
-  "UKZOXsvPZrhefDJD",
-  "MTNJyfuHpZOMtwUA",
-  "fnQDyC0YwGnE4meO",
-  "z2W4rYGbIcRIojuD",
-  "dYRfb22Yy3CBxpfk",
-  "2ryHW2FIuMJKqDGT",
-  "IIYFp2OPHFMjyAIp",
-  "N2geNUixJQlUI70P",
-  "BbXSEvgTNxKaDYXO",
-  "wVfOOOQWKRYbgem5",
-  "qIOfXfA7vWx0vBvB",
-  "1D6TuEetJAn1M4OI",
-  "1vfz2DWtrrs1vzIa",
-  "0xLj3ZKjXUENpHBE",
-  "rt7R88XHh5IJXnJW",
-  "BUkYGDC7iiRnjjmv",
-  "VWpPataAJQwJhJxW",
-  "d0ZnSg3jIrZgTMCp",
-  "FDKV4pwIOL25nCrM",
-  "3QVhE7V6QYtkXJez",
-  "DGbvICz0slO8WVxw",
-  "dEnfkumI6Ko4jKpR",
-  "dMihRd8EOXg8x0bg",
-  "Bxpw4Z1Tco5blmyE",
-  "Q5wy24qVcVRsaNsI",
-  "dmFJBnHikLgr6wgD",
-  "4Quhvloyk6P1IFvU",
-  "L7irt8kdodcUPqCW",
-  "LQaEOiaiNq81xO7f",
-  "vrO5krqKG54aiFIy",
-  "xEEV7GKhgahTo9rv",
-  "pTIqcfLyIpS5cfuC",
-  "RX4BuwZ2LjKBOTRg",
-  "C18hRuvIXPUDJf2c",
-  "Bklpm0Y4gQd8F9O3",
-  "pqDVIXZXPRv7KW00",
-  "d23GNwupSQno2ioM",
-  "1nMre8CupJlQMB2z",
-]
-
-function fullClose(n, m) {
-  let result = Math.random() * (m + 1 - n) + n
-  while (result > m) {
-    result = Math.random() * (m + 1 - n) + n
-  }
-  return Math.ceil(result)
-}
+const key = "1nMre8CupJlQMB2z"
 
 function generateSecret() {
-  var k = []
-  var kl = keys.length
-  const n = fullClose(0, fullClose(88, 88888))
-  var j = n
-  while (j > 0) {
-    var l = j % kl
-    j = Math.floor(j / kl)
-    k.push(keys[l].concat(l, "."))
+  let timestamp = new Date().getTime()
+  let second = Math.floor(timestamp / 1000)
+  return encrypt(Number(second) + 30, key, key)
+}
+
+const rs = axios.create({
+  // axios中请求配置有baseURL选项，表示请求URL公共部分
+  baseURL: process.env.VUE_APP_BASE_API,
+  // 超时
+  timeout: 20000,
+})
+// request拦截器
+rs.interceptors.request.use(
+  (config) => {
+    config.headers["Authorization"] = generateSecret()
+    return config
+  },
+  (error) => {
+    Promise.reject(error)
   }
-  return k.join("")
-}
+)
 
-const networkConfig = {
-  serverUrl: process.env.VUE_APP_BASE_API,
-  requestTimeout: 20000,
-}
-
-// 创建axios实例
-export function requestService(config) {
-  const service = axios.create({
-    // axios中请求配置有baseURL选项，表示请求URL公共部分
-    baseURL: networkConfig.serverUrl,
-    // 超时
-    timeout: networkConfig.requestTimeout,
-  })
-  // request拦截器
-  service.interceptors.request.use(
-    (config) => {
-      config.headers["Authorization"] = generateSecret()
-      return config
-    },
-    (error) => {
-      Promise.reject(error)
-    }
-  )
-
-  // 响应拦截器
-  service.interceptors.response.use(
-    (res) => {
-      return res.data
-    },
-    (error) => {
+// 响应拦截器
+rs.interceptors.response.use(
+  (res) => {
+    return res.data
+  },
+  (error) => {
+    toastMsg("接口调用异常，请重试")
+    if (error.response.data) {
       const err = error.response.data
-      // const errMsg = err.message ? err.message : "接口调用异常，请重试"
-      // toastMsg(errMsg)
       return Promise.reject(err)
+    } else {
+      return Promise.reject(error.response)
     }
-  )
-  return service(config)
-}
+  }
+)
+
+export default rs

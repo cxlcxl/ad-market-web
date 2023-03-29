@@ -104,6 +104,7 @@ export default defineComponent({
         timeRun()
         getVerifyCode({ mobile: signForm.mobile.toString() })
           .then((res) => {
+            console.log("接口调用成功")
             if (res.code === 0) {
               toastMsg("验证码发送成功，请注意查收短信")
             } else {

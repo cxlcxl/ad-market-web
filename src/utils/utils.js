@@ -1,4 +1,4 @@
-import { requestService } from "./request"
+import req from "./request"
 import Toastify from "toastify-js"
 import "toastify-js/src/toastify.css"
 
@@ -19,7 +19,7 @@ export function getVerifyCode({ mobile }) {
   const data = {
     mobile,
   }
-  return requestService({
+  return req({
     url: "/v1/sms",
     method: "post",
     data,
@@ -31,7 +31,7 @@ export function codeVerify({ mobile, code }) {
     mobile: mobile.toString(),
     code: code.toString(),
   }
-  return requestService({
+  return req({
     url: "/v1/sms-valid",
     method: "post",
     data,
