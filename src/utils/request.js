@@ -33,7 +33,6 @@ rs.interceptors.response.use(
     return res.data
   },
   (error) => {
-    toastMsg("接口调用异常，请重试")
     if (error.response.data) {
       const err = error.response.data
       return Promise.reject(err)

@@ -3,6 +3,9 @@
     <header-page />
 
     <div class="leave-msg">
+      <div class="text-box">
+        <div class="how-money">课程仅需 <span>1</span> 元</div>
+      </div>
       <div class="text-box" id="sign-in-box">
         <div class="label">手机号</div>
         <div class="mobile-input">
@@ -20,11 +23,11 @@
         </div>
       </div>
       <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
-      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名</div>
+      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名 仅需 1 元</div>
     </div>
 
     <a href="#sign-in-box">
-      <div class="page-sign-up-btn" :loading="pageData.loading">立即报名</div>
+      <div class="page-sign-up-btn" :loading="pageData.loading">立即报名 仅需 1 元</div>
     </a>
 
     <footer-page />
@@ -87,6 +90,7 @@ export default defineComponent({
         })
         .catch((err) => {
           console.log(err)
+          toastMsg(err.message)
         })
       // pageData.loading = true
     }
@@ -167,6 +171,20 @@ export default defineComponent({
     margin: 0 auto 1rem;
     display: flex;
 
+    .how-money {
+      color: #fa5151;
+      font-size: 1.2rem;
+      text-align: center;
+      width: 100%;
+      line-height: 2rem;
+      height: 2rem;
+      font-weight: 500;
+
+      span{
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+    }
     .label,
     .mobile-input {
       display: inline-block;
