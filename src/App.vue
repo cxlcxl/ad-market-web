@@ -22,6 +22,16 @@
           <span v-else>{{pageData.verifyText}}</span>
         </div>
       </div>
+      <div class="text-box">
+        <wx-open-launch-weapp id="launch-btn" username="gh_XXXXXX" :path="pageData.xcxPath" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%">
+          <div v-is="'script'" type="text/wxtag-template">
+            <div class="wx-btn"
+            style="position: absolute;left:0;top:0;width: 100%;height: 100%;line-height: 44px;text-align: center;color:white;font-size: 16px;">
+              打开小程序
+            </div>
+          </div>
+        </wx-open-launch-weapp>
+      </div>
       <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
       <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名 仅需 1 元</div>
     </div>
@@ -39,6 +49,7 @@ import { defineComponent, onMounted, reactive, ref } from "vue"
 import { getVerifyCode, codeVerify, toastMsg } from "./utils/utils"
 import HeaderPage from "./components/header.vue"
 import FooterPage from "./components/footer.vue"
+import wxJs from './utils/wxconfig'
 
 export default defineComponent({
   components: { HeaderPage, FooterPage },
@@ -51,6 +62,7 @@ export default defineComponent({
       hasError: false,
       codeTimeout: 60,
       errorMsg: "有错误",
+      xcxPath: "pages/friend/friend?mobile="
     })
     let signForm = reactive({
       mobile: "",
@@ -60,6 +72,7 @@ export default defineComponent({
     let timeoutVerify = ref(null)
     onMounted(() => {
       fetchData()
+      wxJs.init(['chooseImage'], undefined, ['wx-open-launch-weapp'])
     })
     const fetchData = () => {
       // pageData.loading = true
@@ -86,6 +99,13 @@ export default defineComponent({
       codeVerify(signForm)
         .then((res) => {
           if (res.code === 0) {
+            toastMsg("验证成功")
+            const state = res.data.state
+            if (state === 1) {
+              gotoPay()
+            } else {
+              gotoXcx()
+            }
           }
         })
         .catch((err) => {
@@ -108,7 +128,6 @@ export default defineComponent({
         timeRun()
         getVerifyCode({ mobile: signForm.mobile.toString() })
           .then((res) => {
-            console.log("接口调用成功")
             if (res.code === 0) {
               toastMsg("验证码发送成功，请注意查收短信")
             } else {
@@ -137,6 +156,12 @@ export default defineComponent({
     const setError = (isErr, msg) => {
       pageData.hasError = isErr
       pageData.errorMsg = !isErr ? "" : msg
+    }
+    const gotoXcx = () => {
+      // 跳转小程序
+    }
+    const gotoPay = () => {
+      // h5 支付
     }
 
     return {
