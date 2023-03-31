@@ -5,9 +5,22 @@ import vue from "@vitejs/plugin-vue"
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "")
   return {
-    plugins: [vue()],
+    plugins: [
+      vue({
+        template: {
+          compilerOptions: {
+            isCustomElement: tag => tag.includes('wx-open-launch')
+          }
+        }
+      })
+    ],
     define: {
       "process.env": env,
+    },
+    build: {
+      commonjsOptions: {
+        transformMixedEsModules: true
+      }
     },
     server: {
       proxy: {

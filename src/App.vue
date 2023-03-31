@@ -3,6 +3,9 @@
     <header-page />
 
     <div class="leave-msg">
+      <div class="text-box">
+        <div class="how-money">课程仅需 <span>1</span> 元</div>
+      </div>
       <div class="text-box" id="sign-in-box">
         <div class="label">手机号</div>
         <div class="mobile-input">
@@ -19,12 +22,19 @@
           <span v-else>{{pageData.verifyText}}</span>
         </div>
       </div>
+      <div class="xcx-btn-box">
+        <wx-open-launch-weapp id="launch-btn" username="gh_XXXXXX" :path="pageData.xcxPath">
+          <component :is="'script'" type="text/wxtag-template">
+            <div class="wx-btn">添加助教获取 1v1 指导</div>
+          </component>
+        </wx-open-launch-weapp>
+      </div>
       <div class="error-msg" v-show="pageData.hasError">{{pageData.errorMsg}}</div>
-      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名</div>
+      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名 仅需 1 元</div>
     </div>
 
     <a href="#sign-in-box">
-      <div class="page-sign-up-btn" :loading="pageData.loading">立即报名</div>
+      <div class="page-sign-up-btn" :loading="pageData.loading">立即报名 仅需 1 元</div>
     </a>
 
     <footer-page />
@@ -36,6 +46,7 @@ import { defineComponent, onMounted, reactive, ref } from "vue"
 import { getVerifyCode, codeVerify, toastMsg } from "./utils/utils"
 import HeaderPage from "./components/header.vue"
 import FooterPage from "./components/footer.vue"
+import wxJs from "./utils/wxconfig"
 
 export default defineComponent({
   components: { HeaderPage, FooterPage },
@@ -48,6 +59,7 @@ export default defineComponent({
       hasError: false,
       codeTimeout: 60,
       errorMsg: "有错误",
+      xcxPath: "pages/friend/friend?mobile=",
     })
     let signForm = reactive({
       mobile: "",
@@ -57,6 +69,7 @@ export default defineComponent({
     let timeoutVerify = ref(null)
     onMounted(() => {
       fetchData()
+      wxJs.init(["chooseImage"], undefined, ["wx-open-launch-weapp"])
     })
     const fetchData = () => {
       // pageData.loading = true
@@ -82,10 +95,19 @@ export default defineComponent({
 
       codeVerify(signForm)
         .then((res) => {
-          // TODO 验证过的用户创建订单支付
+          if (res.code === 0) {
+            toastMsg("验证成功")
+            const state = res.data.state
+            if (state === 1) {
+              gotoPay()
+            } else {
+              gotoXcx()
+            }
+          }
         })
         .catch((err) => {
           console.log(err)
+          toastMsg(err.message)
         })
       // pageData.loading = true
     }
@@ -103,11 +125,7 @@ export default defineComponent({
         timeRun()
         getVerifyCode({ mobile: signForm.mobile.toString() })
           .then((res) => {
-            if (res.data === 0) {
-              toastMsg("验证码发送成功，请注意查收短信")
-            } else {
-              // TODO 已支付过的用户直接引导至微信小程序
-            }
+            toastMsg("验证码发送成功，请注意查收短信")
           })
           .catch((err) => {
             toastMsg(err.message ? err.message : "接口调用异常，请重试")
@@ -131,6 +149,12 @@ export default defineComponent({
     const setError = (isErr, msg) => {
       pageData.hasError = isErr
       pageData.errorMsg = !isErr ? "" : msg
+    }
+    const gotoXcx = () => {
+      // 跳转小程序
+    }
+    const gotoPay = () => {
+      // h5 支付
     }
 
     return {
@@ -165,6 +189,20 @@ export default defineComponent({
     margin: 0 auto 1rem;
     display: flex;
 
+    .how-money {
+      color: #fa5151;
+      font-size: 1.2rem;
+      text-align: center;
+      width: 100%;
+      line-height: 2rem;
+      height: 2rem;
+      font-weight: 500;
+
+      span {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+    }
     .label,
     .mobile-input {
       display: inline-block;

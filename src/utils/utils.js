@@ -37,3 +37,15 @@ export function codeVerify({ mobile, code }) {
     data,
   })
 }
+
+export function getJsSdkSignature({ mobile, code }) {
+  const data = {
+    mobile: mobile.toString(),
+    code: code.toString(),
+  }
+  return req({
+    url: "/v1/sms-valid",
+    method: "post",
+    data,
+  })
+}
