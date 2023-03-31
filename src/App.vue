@@ -82,8 +82,7 @@ export default defineComponent({
 
       codeVerify(signForm)
         .then((res) => {
-          if (res.code === 0) {
-          }
+          // TODO 验证过的用户创建订单支付
         })
         .catch((err) => {
           console.log(err)
@@ -104,11 +103,10 @@ export default defineComponent({
         timeRun()
         getVerifyCode({ mobile: signForm.mobile.toString() })
           .then((res) => {
-            console.log("接口调用成功")
-            if (res.code === 0) {
+            if (res.data === 0) {
               toastMsg("验证码发送成功，请注意查收短信")
             } else {
-              toastMsg(res.message)
+              // TODO 已支付过的用户直接引导至微信小程序
             }
           })
           .catch((err) => {
