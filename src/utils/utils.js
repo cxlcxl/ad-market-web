@@ -38,13 +38,10 @@ export function codeVerify({ mobile, code }) {
   })
 }
 
-export function getJsSdkSignature({ mobile, code }) {
-  const data = {
-    mobile: mobile.toString(),
-    code: code.toString(),
-  }
+export function getJsSdkSignature() {
+  const data = {}
   return req({
-    url: "/v1/sms-valid",
+    url: "/v1/xcx-sdk",
     method: "post",
     data,
   })

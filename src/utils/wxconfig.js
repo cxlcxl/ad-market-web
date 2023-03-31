@@ -1,17 +1,13 @@
-import wx from 'weixin-js-sdk' // SDK依赖
-import { getJsSdkSignature } from './utils'
+import wx from "weixin-js-sdk" // SDK依赖
+import { getJsSdkSignature } from "./utils"
 
 export default {
-  init: (apiList = [], url, tagList = []) => {
+  init: (apiList = [], tagList = []) => {
     // 需要使用的api列表
     // const u = navigator.userAgent.toLowerCase()
     // const isIOS = u.indexOf('iphone') > -1 // 判断是否是ios微信
     return new Promise((resolve, reject) => {
-      getJsSdkSignature({
-        // 从后台获取签名相关的接口
-        // url: url || (isIOS ? window.jsUrl : window.location.href) // 配置签名的URL
-        url: url || window.location.href // 配置签名的URL
-      }).then(
+      getJsSdkSignature().then(
         (res) => {
           // console.log('init -> url==========', url || window.location.href)
           // console.log('init -> res================', res)
@@ -23,7 +19,7 @@ export default {
             nonceStr, // 必填，生成签名的随机串
             signature, // 必填，签名，见附录1
             jsApiList: apiList, // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-            openTagList: tagList // 可选，需要使用的开放标签列表
+            openTagList: tagList, // 可选，需要使用的开放标签列表
           })
           wx.ready((res) => {
             // 微信SDK准备就绪后执行的回调。
@@ -36,5 +32,5 @@ export default {
         }
       )
     })
-  }
+  },
 }

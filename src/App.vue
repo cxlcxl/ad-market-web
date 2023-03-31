@@ -69,7 +69,7 @@ export default defineComponent({
     let timeoutVerify = ref(null)
     onMounted(() => {
       fetchData()
-      wxJs.init(["chooseImage"], undefined, ["wx-open-launch-weapp"])
+      wxJs.init(["chooseImage"], ["wx-open-launch-weapp"])
     })
     const fetchData = () => {
       // pageData.loading = true
