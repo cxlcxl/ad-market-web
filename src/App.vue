@@ -2,11 +2,11 @@
   <div class="page-container">
     <header-page />
 
-    <div class="leave-msg">
+    <div class="leave-msg" id="sign-in-box">
       <div class="text-box">
         <div class="how-money">课程仅需 <span>1</span> 元</div>
       </div>
-      <div class="text-box" id="sign-in-box">
+      <div class="text-box">
         <div class="label">手机号</div>
         <div class="mobile-input">
           <input type="number" placeholder="用于课程及学习资料" class="mobile" v-model="signForm.mobile" @input="handleChangeMobile" maxlength="11" />
@@ -23,9 +23,12 @@
         </div>
       </div>
       <div class="xcx-btn-box">
-        <wx-open-launch-weapp id="launch-btn" username="gh_XXXXXX" :path="pageData.xcxPath">
+        <wx-open-launch-weapp id="launch-btn" username="gh_cf2b2437b2d8" @error="errFun" :path="pageData.xcxPath" style="width: 100%;height: 100%;">
           <component :is="'script'" type="text/wxtag-template">
-            <div class="wx-btn">添加助教获取 1v1 指导</div>
+            <component :is="'style'">
+              .wx-btn {width: 200px; height: 45px; text-align: center; font-size: 17px; display: block;margin: 0 auto; padding: 8px 24px; border: none; border-radius: 4px; background-color: #07c160; color:#fff;}
+            </component>
+            <button class="wx-btn">添加助教获取 1v1 指导</button>
           </component>
         </wx-open-launch-weapp>
       </div>
@@ -43,10 +46,11 @@
 
 <script>
 import { defineComponent, onMounted, reactive, ref } from "vue"
-import { getVerifyCode, codeVerify, toastMsg } from "./utils/utils"
+import { getVerifyCode, codeVerify, toastMsg, get_url_link } from "./utils/utils"
 import HeaderPage from "./components/header.vue"
 import FooterPage from "./components/footer.vue"
 import wxJs from "./utils/wxconfig"
+import {getStorage, setStorage} from './utils/cache'
 
 export default defineComponent({
   components: { HeaderPage, FooterPage },
@@ -54,12 +58,12 @@ export default defineComponent({
     let pageData = reactive({
       verifyText: "获取验证码",
       loading: false,
-      showVerify: false,
+      showVerify: true,
       begin: false,
       hasError: false,
       codeTimeout: 60,
       errorMsg: "有错误",
-      xcxPath: "pages/friend/friend?mobile=",
+      xcxPath: "pages/friend/friend.html?mobile=",
     })
     let signForm = reactive({
       mobile: "",
@@ -69,10 +73,19 @@ export default defineComponent({
     let timeoutVerify = ref(null)
     onMounted(() => {
       fetchData()
-      wxJs.init(["chooseImage"], ["wx-open-launch-weapp"])
+      // wxJs.init()
     })
     const fetchData = () => {
-      // pageData.loading = true
+      const info = getStorage("valid_mobile_info")
+      if (info && info.hasOwnProperty('state')) {
+        toastMsg("检测到您已验证过信息，加载中...")
+        // if (state === 1) {
+        //   gotoPay()
+        // } else {
+        //   gotoXcx()
+        // }
+        gotoXcx()
+      }
     }
     const handleChangeMobile = () => {
       let mobile = signForm.mobile.toString()
@@ -96,13 +109,15 @@ export default defineComponent({
       codeVerify(signForm)
         .then((res) => {
           if (res.code === 0) {
-            toastMsg("验证成功")
+            toastMsg("验证成功，页面自动加载中，请稍后...")
+            setStorage("valid_mobile_info", {mobile: signForm.mobile, state: res.data.state})
             const state = res.data.state
-            if (state === 1) {
-              gotoPay()
-            } else {
-              gotoXcx()
-            }
+            gotoXcx()
+            // if (state === 1) {
+            //   gotoPay()
+            // } else {
+            //   gotoXcx()
+            // }
           }
         })
         .catch((err) => {
@@ -151,10 +166,16 @@ export default defineComponent({
       pageData.errorMsg = !isErr ? "" : msg
     }
     const gotoXcx = () => {
-      // 跳转小程序
+      // 跳转小程序 获取跳转 url_link
+      get_url_link().then(res => {
+        window.location.href = res.data
+      }).catch(err => {console.log(err)})
     }
     const gotoPay = () => {
       // h5 支付
+    }
+    const errFun = (err) => {
+      console.log(err)
     }
 
     return {
@@ -164,6 +185,7 @@ export default defineComponent({
       handleSignIn,
       handleGetVerifyCode,
       handleChangeMobile,
+      errFun,
     }
   },
 })
@@ -270,20 +292,32 @@ export default defineComponent({
 
 .page-sign-up-btn {
   position: fixed;
-  bottom: 0.7rem;
-  left: 5%;
-  width: 90%;
-  max-width: 760px;
+  bottom: 0rem;
+  left: 0;
+  width: 100%;
   background: #67c23a;
   color: #fff;
   font-size: 0.9rem;
   text-align: center;
-  height: 2.2rem;
-  line-height: 2.2rem;
-  border-radius: 1rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
 
   a {
     color: inherit;
   }
 }
+
+.xcx-btn-box {
+  display: none;
+  width: 100%;
+  height:3em;
+
+  wx-open-launch-weapp {
+  height: 30px;
+
+  .wx-btn {
+  }
+}
+}
+
 </style>

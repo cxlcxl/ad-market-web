@@ -46,3 +46,10 @@ export function getJsSdkSignature() {
     data,
   })
 }
+
+export function get_url_link() {
+  return req({
+    url: "/v1/urllink",
+    method: "get",
+  })
+}
