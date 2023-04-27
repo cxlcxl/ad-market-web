@@ -17,8 +17,8 @@
 .footer-page-sign-up-btn {
   width: 90%;
   max-width: 760px;
-  background: #67c23a;
-  color: #fff;
+  background: #FEF79C;
+  color: #fa5151;
   font-size: 0.9rem;
   text-align: center;
   height: 2.2rem;

@@ -54,6 +54,14 @@ export function get_url_link() {
   })
 }
 
+export function query_order(sn) {
+  return req({
+    url: "/v1/query-order",
+    method: "post",
+    data: {sn}
+  })
+}
+
 export function get_h5pay_url({ mobile }) {
   const data = {
     mobile,
