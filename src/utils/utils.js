@@ -53,3 +53,14 @@ export function get_url_link() {
     method: "get",
   })
 }
+
+export function get_h5pay_url({ mobile }) {
+  const data = {
+    mobile,
+  }
+  return req({
+    url: "/v1/pay",
+    method: "post",
+    data
+  })
+}

@@ -46,7 +46,7 @@
 
 <script>
 import { defineComponent, onMounted, reactive, ref } from "vue"
-import { getVerifyCode, codeVerify, toastMsg, get_url_link } from "./utils/utils"
+import { getVerifyCode, codeVerify, toastMsg, get_url_link, get_h5pay_url } from "./utils/utils"
 import HeaderPage from "./components/header.vue"
 import FooterPage from "./components/footer.vue"
 import wxJs from "./utils/wxconfig"
@@ -77,14 +77,14 @@ export default defineComponent({
     })
     const fetchData = () => {
       const info = getStorage("valid_mobile_info")
-      if (info && info.hasOwnProperty('state')) {
+      if (info && info.hasOwnProperty('state') && info.hasOwnProperty('mobile')) {
         toastMsg("检测到您已验证过信息，加载中...")
-        // if (state === 1) {
-        //   gotoPay()
-        // } else {
-        //   gotoXcx()
-        // }
-        gotoXcx()
+        if (Number(info.state) === 1) {
+          gotoPay(info.mobile.toString())
+        } else {
+          gotoXcx()
+        }
+        // gotoXcx()
       }
     }
     const handleChangeMobile = () => {
@@ -109,15 +109,18 @@ export default defineComponent({
       codeVerify(signForm)
         .then((res) => {
           if (res.code === 0) {
-            toastMsg("验证成功，页面自动加载中，请稍后...")
             setStorage("valid_mobile_info", {mobile: signForm.mobile, state: res.data.state})
             const state = res.data.state
-            gotoXcx()
-            // if (state === 1) {
-            //   gotoPay()
-            // } else {
-            //   gotoXcx()
-            // }
+            // gotoXcx()
+            if (state === 1) {
+              toastMsg("验证成功，请稍后...")
+              gotoPay(signForm.mobile.toString())
+            } else {
+              toastMsg("验证成功，即将跳转添加导师...")
+              setTimeout(function () {
+                gotoXcx()
+              }, 2000)
+            }
           }
         })
         .catch((err) => {
@@ -171,8 +174,11 @@ export default defineComponent({
         window.location.href = res.data
       }).catch(err => {console.log(err)})
     }
-    const gotoPay = () => {
+    const gotoPay = (mobile) => {
       // h5 支付
+      get_h5pay_url({ mobile }).then(res => {
+        window.location.href = res.data
+      }).catch(err => {console.log(err)})
     }
     const errFun = (err) => {
       console.log(err)
