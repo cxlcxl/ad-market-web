@@ -15,7 +15,7 @@ export function toastMsg(msg) {
   }).showToast()
 }
 
-export function getVerifyCode({ mobile }) {
+export function getVerifyCode({mobile}) {
   const data = {
     mobile,
   }
@@ -26,7 +26,7 @@ export function getVerifyCode({ mobile }) {
   })
 }
 
-export function codeVerify({ mobile, code }) {
+export function codeVerify({mobile, code}) {
   const data = {
     mobile: mobile.toString(),
     code: code.toString(),
@@ -38,8 +38,8 @@ export function codeVerify({ mobile, code }) {
   })
 }
 
-export function getJsSdkSignature() {
-  const data = {}
+export function getJsSdkSignature(page_url) {
+  const data = {page_url}
   return req({
     url: "/v1/xcx-sdk",
     method: "post",
@@ -62,7 +62,7 @@ export function query_order(sn) {
   })
 }
 
-export function get_h5pay_url({ mobile }) {
+export function get_h5pay_url({mobile}) {
   const data = {
     mobile,
   }
@@ -71,4 +71,8 @@ export function get_h5pay_url({ mobile }) {
     method: "post",
     data
   })
+}
+
+export function is_wx_browser() {
+  return navigator.userAgent.indexOf("MicroMessenger") > 0;
 }

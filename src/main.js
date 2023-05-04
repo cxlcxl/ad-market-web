@@ -2,11 +2,22 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import 'vant/lib/index.css';
-import { createRouter,createWebHashHistory} from "vue-router";
+import { createRouter,createWebHistory} from "vue-router";
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes: []
+  history: createWebHistory(),
+  routes: [
+    {
+      path: "/",
+      name: "Home",
+      component: () => import("./home.vue"),
+    },
+    {
+      path: "/action",
+      name: "PayAction",
+      component: () => import("./pay.vue"),
+    },
+  ]
 })
 
 const app = createApp(App)

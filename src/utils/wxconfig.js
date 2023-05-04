@@ -1,20 +1,23 @@
-import wx from "weixin-js-sdk" // SDK依赖
+import wx from "weixin-js-sdk"
 import { getJsSdkSignature } from "./utils"
+import Settings from '../settings'
 
 // https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/staticstorage/jump-miniprogram.html
 export default {
   init: () => {
     // 需要使用的api列表
+    const u = window.location.href
     // const u = navigator.userAgent.toLowerCase()
     // const isIOS = u.indexOf('iphone') > -1 // 判断是否是ios微信
+    console.log("本地domain", u)
     return new Promise((resolve, reject) => {
-      getJsSdkSignature().then(
+      getJsSdkSignature(u).then(
         (res) => {
           // console.log('init -> url==========', url || window.location.href)
           // console.log('init -> res================', res)
           const { app_id, timestamp, nonce, signature } = res.data
           wx.config({
-            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            debug: Settings.XcxDebug, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: app_id, // 必填，企业号的唯一标识，此处填写企业号corpid
             timestamp, // 必填，生成签名的时间戳
             nonceStr: nonce, // 必填，生成签名的随机串
