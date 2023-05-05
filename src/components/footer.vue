@@ -4,12 +4,12 @@
     <img src="/images/3.jpg" class="cover-img" />
 
     <a href="#sign-in-box">
-      <div class="footer-page-sign-up-btn">立即报名</div>
+      <div class="footer-page-sign-up-btn">立即领取</div>
     </a>
 
     <img src="/images/4.jpg" class="cover-img" />
 
-    <p class="company">天创跨境电商</p>
+    <p class="company"></p>
   </div>
 </template>
 

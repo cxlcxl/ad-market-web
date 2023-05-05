@@ -4,7 +4,8 @@
 
     <div class="leave-msg" id="sign-in-box">
       <div class="text-box">
-        <div class="how-money">课程仅需 <span>1</span> 元</div>
+<!--        <div class="how-money">课程仅需 <span>1</span> 元</div>-->
+        <div class="how-money">抢免费公开课名额</div>
       </div>
       <div class="text-box">
         <div class="label">手机号</div>
@@ -23,12 +24,14 @@
           <span v-else>{{ pageData.verifyText }}</span>
         </div>
       </div>
-      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名 仅需 1 元</div>
+      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即领取</div>
+<!--      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名 仅需 1 元</div>-->
     </div>
 
     <a href="#sign-in-box">
-      <div class="page-sign-up-btn" :loading="pageData.loading">仅需 1 元
-        <div class="sign-now">立即报名</div>
+      <div class="page-sign-up-btn" :loading="pageData.loading">
+        <span class="fetch-font">赠送价值千元上货软件</span>
+        <div class="sign-now">立即领取</div>
       </div>
     </a>
 
@@ -43,8 +46,9 @@ import HeaderPage from "./components/header.vue"
 import FooterPage from "./components/footer.vue"
 import {getStorage, setStorage} from './utils/cache'
 import {showToast} from 'vant';
-import {useRoute} from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 import Settings from './settings'
+import md5 from 'js-md5'
 
 let pageData = reactive({
   verifyText: "获取验证码",
@@ -60,6 +64,7 @@ let signForm = reactive({
 })
 
 const route = useRoute()
+const router = useRouter()
 let timeoutVerify = ref(null)
 onMounted(() => {
   // fetchData()
@@ -102,9 +107,10 @@ const handleSignIn = () => {
   codeVerify(signForm)
       .then((res) => {
         if (res.code === 0) {
-          setStorage("valid_mobile_info", {mobile: signForm.mobile, state: res.data.state})
-          const state = res.data.state
           // gotoXcx()
+          gotoConfirmPage()
+          /*setStorage("valid_mobile_info", {mobile: signForm.mobile, state: res.data.state})
+          const state = res.data.state
           if (state === 1) {
             showToast("验证成功，请稍后...")
             if (res.data.order !== '') {
@@ -118,7 +124,7 @@ const handleSignIn = () => {
             setTimeout(function () {
               gotoXcx()
             }, 2000)
-          }
+          }*/
         }
       })
       .catch((err) => {
@@ -185,15 +191,9 @@ const autoJoinUrl = (url, sn) => {
   return payUrl
 }
 
-const getOpenid = () => {
-  const code = route.query.code
-  if (!code) {
-    const local = encodeURIComponent(window.location.href)
-    const appid = Settings.AppId
-    window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${local}&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect`;
-  } else {
-
-  }
+const gotoConfirmPage = () => {
+  const code = md5(`${signForm.mobile}-${signForm.code}`)
+  router.replace({ name: "PayAction", query: {code}})
 }
 
 </script>
@@ -307,6 +307,24 @@ const getOpenid = () => {
   box-sizing: border-box;
   font-weight: 600;
 
+  .fetch-font {
+    //text-decoration: none;
+    //background-image: -webkit-linear-gradient(
+    //    left,
+    //    #5aa3d9,
+    //    #e57295 20%,
+    //    #ffd400 40%,
+    //    #3498db 60%,
+    //    #fdd3dc 80%,
+    //    #ffd400 90%,
+    //    #ffffff
+    //);
+    //color: transparent;
+    //-webkit-background-clip: text;
+    //background-size: 200% 100%;
+    //animation: slide 5s infinite linear;
+  }
+
   a {
     color: inherit;
   }
@@ -322,7 +340,34 @@ const getOpenid = () => {
     padding: 0 1.5rem;
     border-radius: 1.75rem;
     font-weight: 500;
+    animation: s1 ease-in-out 1.5s infinite;
   }
 }
 
+@keyframes s1 {
+  0% {
+    transform: scale(1.1);
+  }
+  25% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes slide {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
 </style>

@@ -12,9 +12,9 @@
     <div class="header">
       <div class="title line">
         <van-icon name="checked" color="#fff"/>
-        购买成功
+        领取成功
       </div>
-      <div class="line">您已成功购买</div>
+      <div class="line">您已成功领取</div>
       <div class="line">《{{ Settings.LessonName }}》</div>
     </div>
 
@@ -50,7 +50,7 @@ import Settings from "./settings"
 import wxJs from "./utils/wxconfig"
 
 let pageData = reactive({
-  loading: true,
+  loading: false,
   queryTimes: 0,
   payState: 1,
   mobile: '',
@@ -61,13 +61,12 @@ const route = useRoute()
 const router = useRouter()
 onMounted(() => {
   // 1651785378950025216
-  if (/^[a-zA-Z0-9]{15,32}$/.test(route.query.sn)) {
-    // wxJs.init().then((wx, res) => {
-    //   console.log("wx res", res);
-    // }).catch(err => {
-    //   console.log("wx err", err);
-    // })
-    fetchOrderInfo(route.query.sn)
+  // if (/^[a-zA-Z0-9]{15,32}$/.test(route.query.sn)) {
+  if (/^[a-z0-9]{32}$/.test(route.query.code)) {
+    // fetchOrderInfo(route.query.sn)
+    setTimeout(() => {
+      gotoXcx()
+    }, 1000)
   } else {
     backHome()
   }
