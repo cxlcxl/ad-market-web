@@ -1,5 +1,5 @@
 const settings = {
-  RedirectUri: "https://market.skykj.com.cn/action?sn=",
+  RedirectUri: "http://kjds.tcmwl.cn/action?sn=",
   AppId: "wx2556f9550e2b8522",
   XcxDebug: true,
   XcxAppId: "wx06263bcca2197417",
