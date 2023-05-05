@@ -5,7 +5,7 @@ const settings = {
   XcxAppId: "wx06263bcca2197417",
   XcxBaseId: "gh_cf2b2437b2d8",
   XcxPath: "pages/friend/friend.html?mobile=",
-  LessonName: "天创跨境电商体验课"
+  LessonName: "虾皮跨境电商体验课"
 }
 
 export default settings

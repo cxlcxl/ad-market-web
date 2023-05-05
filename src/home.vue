@@ -193,7 +193,7 @@ const autoJoinUrl = (url, sn) => {
 
 const gotoConfirmPage = () => {
   const code = md5(`${signForm.mobile}-${signForm.code}`)
-  router.replace({ name: "PayAction", query: {code}})
+  router.push({ name: "PayAction", query: {code}})
 }
 
 </script>
