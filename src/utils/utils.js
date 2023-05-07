@@ -30,6 +30,7 @@ export function codeVerify({mobile, code}) {
   const data = {
     mobile: mobile.toString(),
     code: code.toString(),
+    log_id_url: window.location.href
   }
   return req({
     url: "/v1/sms-valid",
