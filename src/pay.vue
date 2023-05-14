@@ -27,7 +27,6 @@
       <div class="line tip">本课程有助教老师全程伴读，添加老师后方可学习！</div>
     </div>
 
-
     <div class="xcx-btn-box">
       <!--      <wx-open-launch-weapp id="launch-btn" :username="Settings.XcxBaseId" :appid="Settings.XcxAppId"-->
       <!--                            @error="errFun" :path="Settings.XcxPath + pageData.mobile">-->
@@ -50,7 +49,7 @@ import Settings from "./settings"
 import wxJs from "./utils/wxconfig"
 
 let pageData = reactive({
-  loading: false,
+  loading: true,
   queryTimes: 0,
   payState: 1,
   mobile: '',
@@ -61,12 +60,12 @@ const route = useRoute()
 const router = useRouter()
 onMounted(() => {
   // 1651785378950025216
-  // if (/^[a-zA-Z0-9]{15,32}$/.test(route.query.sn)) {
-  if (/^[a-z0-9]{32}$/.test(route.query.code)) {
-    // fetchOrderInfo(route.query.sn)
-    setTimeout(() => {
-      gotoXcx()
-    }, 1000)
+  if (/^[a-zA-Z0-9]{15,32}$/.test(route.query.sn)) {
+    fetchOrderInfo(route.query.sn)
+  // if (/^[a-z0-9]{32}$/.test(route.query.code)) {
+    // setTimeout(() => {
+    //   gotoXcx()
+    // }, 1000)
   } else {
     backHome()
   }

@@ -4,8 +4,7 @@
 
     <div class="leave-msg" id="sign-in-box">
       <div class="text-box">
-<!--        <div class="how-money">课程仅需 <span>1</span> 元</div>-->
-        <div class="how-money">抢免费公开课名额</div>
+        <div class="how-money">1 元抢副业名额</div>
       </div>
       <div class="text-box">
         <div class="label">手机号</div>
@@ -25,7 +24,6 @@
         </div>
       </div>
       <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即领取</div>
-<!--      <div class="sign-up-btn" @click="handleSignIn" :loading="pageData.loading">立即报名 仅需 1 元</div>-->
     </div>
 
     <a href="#sign-in-box">
@@ -108,8 +106,8 @@ const handleSignIn = () => {
       .then((res) => {
         if (res.code === 0) {
           // gotoXcx()
-          gotoConfirmPage()
-          /*setStorage("valid_mobile_info", {mobile: signForm.mobile, state: res.data.state})
+          // gotoConfirmPage()
+          setStorage("valid_mobile_info", {mobile: signForm.mobile, state: res.data.state})
           const state = res.data.state
           if (state === 1) {
             showToast("验证成功，请稍后...")
@@ -124,7 +122,7 @@ const handleSignIn = () => {
             setTimeout(function () {
               gotoXcx()
             }, 2000)
-          }*/
+          }
         }
       })
       .catch((err) => {
@@ -210,7 +208,7 @@ const gotoConfirmPage = () => {
   box-sizing: border-box;
 
   .leave-msg {
-    margin: 1.5rem 0;
+    margin: 1rem 0 1.5rem;
   }
 
   .text-box {
@@ -282,8 +280,8 @@ const gotoConfirmPage = () => {
 
   .sign-up-btn {
     width: 90%;
-    background: #FEF79C;
-    color: #fa5151;
+    background: #07C160;
+    color: #fff;
     font-size: 0.9rem;
     text-align: center;
     margin: .5rem auto 0;
@@ -306,24 +304,6 @@ const gotoConfirmPage = () => {
   line-height: 3rem;
   box-sizing: border-box;
   font-weight: 600;
-
-  .fetch-font {
-    //text-decoration: none;
-    //background-image: -webkit-linear-gradient(
-    //    left,
-    //    #5aa3d9,
-    //    #e57295 20%,
-    //    #ffd400 40%,
-    //    #3498db 60%,
-    //    #fdd3dc 80%,
-    //    #ffd400 90%,
-    //    #ffffff
-    //);
-    //color: transparent;
-    //-webkit-background-clip: text;
-    //background-size: 200% 100%;
-    //animation: slide 5s infinite linear;
-  }
 
   a {
     color: inherit;
@@ -359,15 +339,6 @@ const gotoConfirmPage = () => {
   }
   100% {
     transform: scale(1.1);
-  }
-}
-
-@keyframes slide {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: -100% 0;
   }
 }
 </style>
